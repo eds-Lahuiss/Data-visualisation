@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worth The Bag - Comparateur de Joueurs NBA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <link rel="icon" href="asset/logo/logo_simplifie.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#home" class="sidebar-link active" data-section="home" title="Accueil">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </a>
+            </li>
+            <li>
+                <a href="#select" class="sidebar-link" data-section="select" title="Sélectionner">
+                    <img src="asset/icons/icone_stats_classique.svg" alt="Section Stats">
+                </a>
+            </li>
+            <li>
+                <a href="#shooting" class="sidebar-link" data-section="shooting" title="Tir">
+                    <img src="asset/icons/icone_precision.svg" alt="Section Pourcentages au tir">
+                </a>
+            </li>
+            <li>
+                <a href="#advanced" class="sidebar-link" data-section="advanced" title="Stats avancées">
+                    <img src="asset/icons/icone_stats_avancees.svg" alt="Section Stats Avancées">
+                </a>
+            </li>
+            <li>
+                <a href="#verdict" class="sidebar-link" data-section="verdict" title="Verdict">
+                    <img src="asset/icons/pastille_neutre.svg" alt="Section Verdict">
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- SECTION 1: Home -->
+        <section id="home" class="section section-hero">
+            <img src="asset/logo/monogramme.svg" alt="Monogramme WB" class="monogramme-corner">
+            <div class="hero-content">
+                <img src="asset/logo/logo_complet.svg" alt="Worth The Bag Logo" class="hero-logo">
+                <h1>Worth The Bag</h1>
+                <div class="hero-divider"></div>
+                <p class="hero-subtitle">Outil d'analyse pour savoir si un joueur NBA vaut son salaire</p>
+                <p class="hero-subtitle">Pour la saison 2024 - 2025</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Select Player + Radar + Context -->
+        <section id="select" class="section">
+            <div class="section-container">
+                <div class="section-title">Choisissez votre joueur :</div>
+                
+                <div class="player-selector-zone">
+                    <div class="player-avatar-wrapper" onclick="openPlayerModal()">
+                        <img id="selectedPlayerAvatar" src="" alt="Player" class="player-avatar">
+                        <div class="avatar-overlay">Changer</div>
+                    </div>
+                </div>
+
+                <div class="select-content">
+                    <div class="radar-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    
+                    <div class="context-cards">
+                        <div class="context-card">
+                            <div class="card-icon" id="teamLogoCard">
+                            </div>
+                            <div class="card-label">Équipe</div>
+                            <div class="card-value" id="contextTeam">-</div>
+                        </div>
+                        <div class="context-card">
+                            <div class="card-icon">
+                                <img src="asset/icons/icone_matchs_joues.svg" alt="Matchs joués">
+                            </div>
+                            <div class="card-label">Matchs joués</div>
+                            <div class="card-value" id="contextGames">-</div>
+                        </div>
+                        <div class="context-card">
+                            <div class="card-icon">
+                                <img src="asset/icons/icone_matchs joues_titulaire.svg" alt="Titulaire">
+                            </div>
+                            <div class="card-label">Titulaire</div>
+                            <div class="card-value" id="contextStarts">-</div>
+                        </div>
+                        <div class="context-card">
+                            <div class="card-icon">
+                                <img src="asset/icons/icone_salaire.svg" alt="Salaire">
+                            </div>
+                            <div class="card-label">Salaire</div>
+                            <div class="card-value" id="contextSalary">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Shooting Stats + Court -->
+        <section id="shooting" class="section">
+            <div class="section-container">
+                <div class="section-title">Pourcentages au tir</div>
+                
+                <div class="shooting-content">
+                    <div class="shooting-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Tir global</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="statFG">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progressFG" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">À 2 points</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="stat2P">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progress2P" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">À 3 points</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="stat3P">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progress3P" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Lancers francs</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="statFT">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progressFT" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">TS% (True Shooting)</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="statTS">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progressTS" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">eFG% (Eff. Field Goal)</div>
+                            <div class="stat-content">
+                                <div class="stat-value"><span id="statEFG">-</span>%</div>
+                                <div class="stat-bar-wrapper">
+                                    <div class="stat-bar">
+                                        <div class="stat-progress" id="progressEFG" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="court-container">
+                        <div class="court-title">Zones de tir (survolez les zones)</div>
+                        <div class="court">
+                            <svg viewBox="0 0 500 470" class="court-svg" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Fond du terrain -->
+                                <rect width="500" height="470" fill="#f5f3f0" stroke="#1a1a1a" stroke-width="2.5"/>
+                                
+                                <!-- Lignes de base et latérales -->
+                                <line x1="0" y1="0" x2="500" y2="0" stroke="#1a1a1a" stroke-width="2.5"/>
+                                <line x1="0" y1="470" x2="500" y2="470" stroke="#1a1a1a" stroke-width="2.5"/>
+                                <line x1="0" y1="0" x2="0" y2="470" stroke="#1a1a1a" stroke-width="2.5"/>
+                                <line x1="500" y1="0" x2="500" y2="470" stroke="#1a1a1a" stroke-width="2.5"/>
+                                
+                                <!-- Ligne médiane -->
+                                <line x1="250" y1="0" x2="250" y2="470" stroke="#999" stroke-width="1.5" stroke-dasharray="5,3"/>
+                                
+                                <!-- ========== Zone PANIER ========== -->
+                                <!-- Cercle du panier (hoop) -->
+                                <circle cx="250" cy="40" r="9" fill="none" stroke="#ff4444" stroke-width="2"/>
+                                
+                                <!-- Restricted Area (petite raquette) -->
+                                <rect x="190" y="0" width="120" height="40" fill="none" stroke="#999" stroke-width="1.5"/>
+                                
+                                <!-- Raquette (Free Throw Lane) -->
+                                <rect x="170" y="0" width="160" height="190" fill="none" stroke="#999" stroke-width="2"/>
+                                
+                                <!-- Demi-cercle du lancer franc (bottom) - Proportions NBA correctes -->
+                                <path d="M 170 190 A 60 60 0 0 0 330 190" fill="none" stroke="#999" stroke-width="1.5"/>
+                                
+                                <!-- ========== Ligne à 3 points ========== -->
+                                <!-- Droites avant l'arc -->
+                                <line x1="50" y1="0" x2="50" y2="175" stroke="#999" stroke-width="2"/>
+                                <line x1="450" y1="0" x2="450" y2="175" stroke="#999" stroke-width="2"/>
+                                
+                                <!-- Arc à 3 points (NBA) -->
+                                <path d="M 50 175 Q 50 280 250 280 Q 450 280 450 175" fill="none" stroke="#999" stroke-width="2"/>
+                                
+                                <!-- ========== Zones interactives invisibles ========== -->
+                                <!-- Zone 2 points: intérieur de la ligne à 3 points -->
+                                <path id="zone2p-path" d="M 50 0 L 450 0 L 450 175 Q 450 280 250 280 Q 50 280 50 175 Z" fill="rgba(0, 102, 204, 0)" stroke="none" style="pointer-events: auto; cursor: pointer;"/>
+                                
+                                <!-- Zone 3 points: extérieur de la ligne à 3 points -->
+                                <path id="zone3p-path" d="M 0 0 L 50 0 L 50 175 Q 50 280 250 280 Q 450 280 450 175 L 450 0 L 500 0 L 500 470 L 0 470 Z" fill="rgba(0, 102, 204, 0)" stroke="none" style="pointer-events: auto; cursor: pointer;"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Advanced Stats -->
+        <section id="advanced" class="section">
+            <div class="section-container">
+                <div class="section-title">Stats avancées</div>
+                
+                <div class="advanced-content">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_avancees.svg" alt="AST/TOV">
+                            </div>
+                            <div class="kpi-label">AST/TOV</div>
+                            <div class="kpi-value" id="advKpiAstTov">-</div>
+                            <div class="kpi-impact" id="advKpiAstTovImpact">-</div>
+                            <div class="kpi-description">Ratio passes/pertes de balle</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_avancees.svg" alt="PER">
+                            </div>
+                            <div class="kpi-label">PER</div>
+                            <div class="kpi-value" id="advKpiPer">-</div>
+                            <div class="kpi-impact" id="advKpiPerImpact">-</div>
+                            <div class="kpi-description">Indice global d'efficacité</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_avancees.svg" alt="BPM">
+                            </div>
+                            <div class="kpi-label">BPM</div>
+                            <div class="kpi-value" id="advKpiBpm">-</div>
+                            <div class="kpi-impact" id="advKpiBpmImpact">-</div>
+                            <div class="kpi-description">Points générés par minute</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_défensive.svg" alt="OBPM">
+                            </div>
+                            <div class="kpi-label">OBPM</div>
+                            <div class="kpi-value" id="advKpiObpm">-</div>
+                            <div class="kpi-impact" id="advKpiObpmImpact">-</div>
+                            <div class="kpi-description">Impact offensif par minute</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_défensive.svg" alt="DBPM">
+                            </div>
+                            <div class="kpi-label">DBPM</div>
+                            <div class="kpi-value" id="advKpiDbpm">-</div>
+                            <div class="kpi-impact" id="advKpiDbpmImpact">-</div>
+                            <div class="kpi-description">Impact défensif par minute</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <img src="asset/icons/icone_stats_avancees.svg" alt="WS">
+                            </div>
+                            <div class="kpi-label">Win Shares</div>
+                            <div class="kpi-value" id="advKpiWs">-</div>
+                            <div class="kpi-impact" id="advKpiWsImpact">-</div>
+                            <div class="kpi-description">Victoires contributées</div>
+                        </div>
+                    </div>
+
+                    <div class="advanced-chart-container">
+                        <div class="court-title">Comparaison des métriques</div>
+                        <canvas id="advancedChart"></canvas>
+                        <div class="court-title">Équilibre Offensif/Défensif</div>
+                        <canvas id="offDefChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Verdict -->
+        <section id="verdict" class="section">
+            <div class="section-container verdict-centered">
+                <div class="verdict-card">
+                    <img id="verdictPlayerPhoto" src="" alt="Player" class="verdict-photo">
+                    <h2>Est-ce que <span id="verdictPlayerName">-</span> vaut son salaire ?</h2>
+                    <div class="verdict-badge" id="verdictBadge">
+                        <img id="verdictPastille" src="" alt="Badge" class="pastille">
+                    </div>
+                    <p class="verdict-text" id="verdictText">-</p>
+                    <div class="verdict-index">
+                        <span>Value Index:</span>
+                        <strong id="verdictIndex">-</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Player Selection Modal -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closePlayerModal()">&times;</span>
+            <h3>Sélectionnez un joueur</h3>
+            <div class="player-grid" id="playerGrid"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
